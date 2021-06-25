@@ -1,0 +1,151 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import numpy as np
+
+RI_dict = {1: 0, 2: 0, 3: 0.58, 4: 0.90, 5: 1.12, 6: 1.24, 7: 1.32, 8: 1.41, 9: 1.45}
+
+
+def get_w(array):
+    row = array.shape[0]  # 计算出阶数
+    a_axis_0_sum = array.sum(axis=0)
+    # print(a_axis_0_sum)
+    b = array / a_axis_0_sum  # 新的矩阵b
+    # print(b)
+    b_axis_0_sum = b.sum(axis=0)
+    b_axis_1_sum = b.sum(axis=1)  # 每一行的特征向量
+    # print(b_axis_1_sum)
+    w = b_axis_1_sum / row  # 归一化处理(特征向量)
+    nw = w * row
+    AW = (w * array).sum(axis=1)
+    # print(AW)
+    max_max = sum(AW / (row * w))
+    print('最大特征值' + str(max_max))
+    CI = (max_max - row) / (row - 1)
+    CR = CI / RI_dict[row]
+    print('一致性校验指标CI=' + str(CI))
+    print('一致性比率CP=' + str(CR))
+    if CR < 0.1:
+        # print(round(CR, 3))
+        # print('满足一致性')
+        # print(np.max(w))
+        # print(sorted(w,reverse=True))
+        # print(max_max)
+        # print('特征向量:%s' % w)
+        return w
+    else:
+        print(round(CR, 3))
+        print('不满足一致性，请进行修改')
+
+
+def main(array):
+    if type(array) is np.ndarray:
+        return get_w(array)
+    else:
+        print('请输入numpy对象')
+
+
+if __name__ == '__main__':
+    print('准则层对目标层')
+    z = np.array([[1, 1 / 3, 3, 5, 5, 1 / 3, 3],
+                  [2, 1, 9, 9, 9, 1, 9],
+                  [1 / 3, 1 / 9, 1, 2, 3, 1 / 9, 1],
+                  [1 / 5, 1 / 9, 1 / 2, 1, 2, 1 / 9, 1 / 3],
+                  [1 / 5, 1 / 10, 1 / 3, 1 / 2, 1, 1 / 9, 1 / 3],
+                  [3, 1, 9, 9, 9, 1, 3],
+                  [1 / 3, 1 / 9, 1, 3, 3, 1 / 3, 1]])
+    z = main(z)
+    print('权向量为：' + str(z))
+    print()
+    print('--------------------------------------------')
+
+    print('针对社会地位')
+    a = np.array([[1, 1 / 4, 1 / 3, 1 / 5, 1 / 2],
+                  [4, 1, 2, 1, 1 / 2],
+                  [3, 1 / 2, 1, 1, 1 / 2],
+                  [5, 1, 1, 1, 1],
+                  [2, 2, 2, 1, 1]])
+    a = main(a)
+    print('权向量为：' + str(a))
+    print()
+    print('--------------------------------------------')
+
+    print('针对工作情况')
+    b = np.array([[1, 5, 2, 2, 3],
+                  [1 / 5, 1, 1 / 3, 1 / 3, 1 / 2],
+                  [1 / 2, 3, 1, 1, 2],
+                  [1 / 2, 3, 1, 1, 2 / 3],
+                  [1 / 3, 2, 1 / 2, 3 / 2, 1]])
+    b = main(b)
+    print('权向量为：' + str(b))
+    print()
+    print('--------------------------------------------')
+
+    print('针对经济情况')
+    c = np.array([[1, 3, 1 / 3, 1 / 3, 1 / 6],
+                  [1 / 3, 1, 1 / 9, 1 / 8, 1 / 15],
+                  [3, 9, 1, 1, 1 / 6],
+                  [3, 8, 1, 1, 1 / 6],
+                  [6, 15, 6, 6, 1]])
+    c = main(c)
+    print('权向量为：' + str(c))
+    print()
+    print('--------------------------------------------')
+
+    print('针对发展前途')
+    d = np.array([[1, 1, 1 / 4, 1 / 4, 1 / 5],
+                  [1, 1, 1 / 3, 1 / 4, 1 / 5],
+                  [3, 3, 1, 1/4, 3 / 5],
+                  [4, 4, 4/3, 1, 4 / 5],
+                  [5, 5, 5/3, 5/4, 1]])
+    d = main(d)
+    print('权向量为：' + str(d))
+    print()
+    print('--------------------------------------------')
+
+
+    print('针对住房条件')
+    e = np.array([[1, 1, 2, 2, 1/4],
+                  [1, 1, 2, 2, 1/4],
+                  [1/2, 1/2, 1, 1, 1/8],
+                  [1/2, 1/2, 1, 1, 1/8],
+                  [4, 4, 8, 7, 1]])
+    e = main(e)
+    print('权向量为：' + str(e))
+    print()
+    print('--------------------------------------------')
+
+    print('针对家庭状况')
+    f = np.array([[1, 1/3, 1/4, 1/6, 1/9],
+                  [3, 1, 1/2, 1/3, 1/6],
+                  [4, 2, 1, 1/3, 1/5],
+                  [6, 3, 3, 1, 1/3],
+                  [9, 6, 5, 3, 1]])
+    f = main(f)
+    print('权向量为：' + str(f))
+    print()
+    print('--------------------------------------------')
+
+    print('针对风险状况')
+    g = np.array([[1, 1/3, 1/5, 1/5, 1/12],
+                  [3, 1, 1/2, 1/6, 1/10],
+                  [5, 2, 1, 1/2, 1/8],
+                  [5, 6, 2, 1, 1/6],
+                  [12, 10, 8, 6, 1]])
+    g = main(g)
+    print('权向量为：' + str(g))
+
+
+    try:
+        res = np.array([a, b, c, d, e, f, g])
+        print(np.transpose(res))
+        print('z')
+        print(z)
+        print()
+        print(np.transpose(res) * z)
+        print()
+        ret = (np.transpose(res) * z).sum(axis=1)
+        print(ret)
+    except TypeError:
+        print('数据有误，可能不满足一致性，请进行修改')
+
